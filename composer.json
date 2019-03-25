@@ -1,0 +1,45 @@
+{
+    "name": "dbt/backpack",
+    "description": "Typed array trait for various classes",
+    "keywords": [
+        "dbt",
+        "validation"
+    ],
+    "homepage": "https://github.com/dbt/backpack",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Daniel S. Deboer",
+            "email": "daniel.s.deboer@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "dbt/phpunit-runner": "^0.1.2",
+        "dbt/type-checker": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0",
+        "vimeo/psalm": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Dbt\\Backpack\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Dbt\\Backpack\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "php ./vendor/dbt/phpunit-runner/phpunit.php --no-coverage",
+        "coverage": "phpunit --coverage-html coverage",
+        "stat": "psalm"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
