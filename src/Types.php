@@ -8,6 +8,7 @@ use TypeError;
 
 final class Types
 {
+    /** @var array */
     private $types;
 
     public function __construct (array $types)
@@ -16,11 +17,21 @@ final class Types
         $this->setMany($types);
     }
 
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return bool
+     */
     public function hasOk (string $key, $value): bool
     {
         return $this->has($key) && $this->is($key, $value);
     }
 
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return bool
+     */
     public function is (string $key, $value): bool
     {
         return Type::test($value, $this->get($key));
