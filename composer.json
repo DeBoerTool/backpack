@@ -21,6 +21,7 @@
         "dbt/type-checker": "^1.0"
     },
     "require-dev": {
+        "larapack/dd": "^1.1",
         "phpunit/phpunit": "^7.0",
         "vimeo/psalm": "^3.1"
     },

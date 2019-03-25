@@ -2,11 +2,28 @@
 
 namespace Dbt\Backpack;
 
+use Dbt\Backpack\Exceptions\MissingKey;
+use Dbt\Backpack\Exceptions\UndefinedProperty;
+
 trait Backpack
 {
     protected $backpack = [];
 
     abstract protected function types (): Types;
+
+    public function hydrate (array $values)
+    {
+        // When hydrating, require each key to be present on the given array
+        // of values so there are no undefined values present.
+        foreach ($this->types()->all() as $key => $type) {
+            if (isset($values[$key])) {
+                $this->$key = $values[$key];
+                continue;
+            }
+
+            throw MissingKey::of($key, get_class($this));
+        }
+    }
 
     public function __set ($key, $value)
     {
@@ -24,13 +41,6 @@ trait Backpack
             return $this->backpack[$key];
         }
 
-        $this->noSuchKey($key);
-    }
-
-    protected function noSuchKey (string $key)
-    {
-        throw new \Exception(
-            sprintf('Undefined property %s::$%s', get_class($this), $key)
-        );
+        throw UndefinedProperty::of($key, get_class($this));
     }
 }
