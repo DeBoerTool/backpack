@@ -4,7 +4,9 @@ namespace Dbt\Backpack\Tests;
 
 use Dbt\Backpack\Exceptions\MissingKey;
 use Dbt\Backpack\Exceptions\UndefinedProperty;
+use Dbt\Backpack\Exceptions\WrongType;
 use Dbt\Backpack\Tests\Fixtures\Fixture;
+use stdClass;
 
 class BackpackTest extends TestCase
 {
@@ -49,28 +51,81 @@ class BackpackTest extends TestCase
         $fixture->thisShouldFail;
     }
 
-    public function hydrating ()
+    /**
+     * @test
+     * @dataProvider passingHydrationData
+     */
+    public function hydrating ($payload, $test1, $test2)
+    {
+        $fixture = new Fixture();
+
+        $fixture->hydrate($payload);
+
+        $this->assertSame($test1, $fixture->test1);
+        $this->assertSame($test2, $fixture->test2);
+    }
+
+    /**
+     * @test
+     * @dataProvider failingHydrationData
+     */
+    public function failing_to_hydrate ($exception, $payload)
+    {
+        $this->expectException($exception);
+
+        $fixture = new Fixture();
+        $fixture->hydrate($payload);
+    }
+
+    public function passingHydrationData (): array
     {
         $string = 'some string';
         $array = ['test array'];
-        $fixture = new Fixture();
 
-        $fixture->hydrate(['test1' => $string, 'test2', $array]);
-
-        $this->assertSame($string, $fixture->test1);
-        $this->assertSame($array, $fixture->test2);
+        return [
+            'payload is associative' => [
+                ['test1' => $string, 'test2' => $array],
+                $string,
+                $array,
+            ],
+            'payload is non-associative' => [
+                [$string, $array],
+                $string,
+                $array,
+            ],
+            'payload has extra values' => [
+                [$string, $array, 'this is an extra value'],
+                $string,
+                $array,
+            ],
+        ];
     }
 
-    /** @test */
-    public function failing_with_too_few_members ()
+    public function failingHydrationData (): array
     {
-        $this->expectException(MissingKey::class);
-
         $string = 'some string';
-        $fixture = new Fixture();
+        $array = ['test array'];
+        $class = new stdClass();
 
-        $fixture->hydrate(['test1' => $string]);
-
-        $this->assertSame($string, $fixture->test1);
+        return [
+            'has the wrong types (associative)' => [
+                WrongType::class,
+                ['test1' => $class, 'test2' => $array],
+            ],
+            'has the wrong types (non-associative)' => [
+                WrongType::class,
+                [$string, $class],
+            ],
+            'is missing an value (associative)' => [
+                MissingKey::class,
+                ['test1' => $string],
+            ],
+            'is missing a value (non-associative)' => [
+                MissingKey::class,
+                [$string],
+            ],
+        ];
     }
+
+
 }

@@ -4,6 +4,7 @@ namespace Dbt\Backpack;
 
 use Dbt\Backpack\Exceptions\MissingKey;
 use Dbt\Backpack\Exceptions\UndefinedProperty;
+use Dbt\Backpack\Exceptions\WrongType;
 
 trait Backpack
 {
@@ -13,26 +14,34 @@ trait Backpack
 
     public function hydrate (array $values)
     {
+        $index = -1;
+
         // When hydrating, require each key to be present on the given array
         // of values so there are no undefined values present.
         foreach ($this->types()->all() as $key => $type) {
-            if (isset($values[$key])) {
-                $this->$key = $values[$key];
-                continue;
-            }
+            $index++;
 
-            throw MissingKey::of($key, get_class($this));
+            switch (true) {
+                case isset($values[$key]):
+                    $this->$key = $values[$key];
+                    break;
+                case isset($values[$index]):
+                    $this->$key = $values[$index];
+                    break;
+                default:
+                    throw MissingKey::of($key, get_class($this));
+            }
         }
     }
 
     public function __set ($key, $value)
     {
-        if ($this->types()->hasOk($key, $value)) {
-            $this->backpack[$key] = $value;
+        if ($this->types()->has($key)) {
+            $this->validateAndSet($key, $value);
+            return;
         }
 
-        // This replicates PHP's behaviour.
-        $this->$key = $value;
+        throw UndefinedProperty::of($key, get_class($this));
     }
 
     public function __get ($key)
@@ -42,5 +51,15 @@ trait Backpack
         }
 
         throw UndefinedProperty::of($key, get_class($this));
+    }
+
+    protected function validateAndSet (string $key, $value)
+    {
+        if ($this->types()->is($key, $value)) {
+            $this->backpack[$key] = $value;
+            return;
+        }
+
+        throw WrongType::of($key, $this->types()->get($key));
     }
 }
