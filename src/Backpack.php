@@ -12,7 +12,7 @@ trait Backpack
 
     abstract protected function types (): Types;
 
-    public function hydrate (array $values)
+    public function hydrate (array $values): void
     {
         $index = -1;
 

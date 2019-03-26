@@ -3,13 +3,14 @@
 namespace Dbt\Backpack\Tests\Fixtures;
 
 use Dbt\Backpack\Backpack;
+use Dbt\Backpack\HasBackpack;
 use Dbt\Backpack\Types;
 
 /**
  * @property string test1
  * @property array test2
  */
-class Fixture
+class Fixture implements HasBackpack
 {
     use Backpack;
 
