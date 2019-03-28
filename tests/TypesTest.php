@@ -65,6 +65,7 @@ class TypesTest extends TestCase
         (new Types([]))->set($key, $type);
     }
 
+    /** @test */
     public function getting_all_types ()
     {
         $array = ['test' => 'string', 'testing' => 'bool'];
@@ -72,5 +73,19 @@ class TypesTest extends TestCase
         $types = new Types($array);
 
         $this->assertSame($array, $types->all());
+    }
+
+    /** @test */
+    public function mapping ()
+    {
+        $input = ['test' => 'string', 'testing' => 'bool'];
+        $output = ['test' => 'test.string', 'testing' => 'testing.bool'];
+        $types = new Types($input);
+
+        $mapped = $types->map(function ($key, $value) {
+            return sprintf('%s.%s', $key, $value);
+        });
+
+        $this->assertSame($output, $mapped);
     }
 }

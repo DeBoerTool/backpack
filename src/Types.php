@@ -2,6 +2,7 @@
 
 namespace Dbt\Backpack;
 
+use Closure;
 use Dbt\TypeChecker\Alias;
 use Dbt\TypeChecker\Type;
 use TypeError;
@@ -61,6 +62,17 @@ final class Types
     public function all (): array
     {
         return $this->types;
+    }
+
+    public function map (Closure $callback): array
+    {
+        $keys = array_keys($this->all());
+        $values = array_values($this->all());
+
+        return array_combine(
+            $keys,
+            array_map($callback, $keys, $values)
+        );
     }
 
     public function setMany (array $types): void
