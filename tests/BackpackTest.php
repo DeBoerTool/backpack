@@ -6,6 +6,7 @@ use Dbt\Backpack\Exceptions\MissingKey;
 use Dbt\Backpack\Exceptions\UndefinedProperty;
 use Dbt\Backpack\Exceptions\WrongType;
 use Dbt\Backpack\Tests\Fixtures\Fixture;
+use Dbt\Backpack\Types;
 use stdClass;
 
 class BackpackTest extends TestCase
@@ -75,6 +76,15 @@ class BackpackTest extends TestCase
 
         $fixture = new Fixture();
         $fixture->hydrate($payload);
+    }
+
+    /** @test */
+    public function getting_types ()
+    {
+        $this->assertInstanceOf(Types::class, Fixture::getTypes());
+
+        // Check that the same instance returns each time.
+        $this->assertSame(Fixture::getTypes(), Fixture::getTypes());
     }
 
     public function passingHydrationData (): array

@@ -9,17 +9,17 @@ use Dbt\Backpack\Exceptions\WrongType;
 trait Backpack
 {
     protected $backpack = [];
-    protected $types = null;
+    protected static $types = null;
 
-    abstract protected function types (): Types;
+    abstract protected static function types (): Types;
 
-    public function getTypes (): Types
+    public static function getTypes (): Types
     {
-        if ($this->types === null) {
-            $this->types = $this->types();
+        if (static::$types === null) {
+            static::$types = static::types();
         }
 
-        return $this->types;
+        return static::$types;
     }
 
     public function hydrate (array $values): void
@@ -28,7 +28,7 @@ trait Backpack
 
         // When hydrating, require each key to be present on the given array
         // of values so there are no undefined values present.
-        foreach ($this->getTypes()->all() as $key => $type) {
+        foreach (static::getTypes()->all() as $key => $type) {
             $index++;
 
             switch (true) {
@@ -46,7 +46,7 @@ trait Backpack
 
     public function __set ($key, $value)
     {
-        if ($this->getTypes()->has($key)) {
+        if (static::getTypes()->has($key)) {
             $this->validateAndSet($key, $value);
             return;
         }
@@ -56,7 +56,7 @@ trait Backpack
 
     public function __get ($key)
     {
-        if ($this->getTypes()->has($key)) {
+        if (static::getTypes()->has($key)) {
             return $this->backpack[$key];
         }
 
@@ -65,11 +65,11 @@ trait Backpack
 
     protected function validateAndSet (string $key, $value)
     {
-        if ($this->getTypes()->is($key, $value)) {
+        if (static::getTypes()->is($key, $value)) {
             $this->backpack[$key] = $value;
             return;
         }
 
-        throw WrongType::of($key, $this->getTypes()->get($key));
+        throw WrongType::of($key, static::getTypes()->get($key));
     }
 }
