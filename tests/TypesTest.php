@@ -88,4 +88,17 @@ class TypesTest extends TestCase
 
         $this->assertSame($output, $mapped);
     }
+
+    /** @test */
+    public function mapping_with_index ()
+    {
+        $input = ['test' => 'string', 'testing' => 'bool'];
+        $count = 0;
+
+        (new Types($input))->map(function ($key, $value, $index) use (&$count) {
+            $this->assertSame($count, $index);
+
+            $count++;
+        });
+    }
 }

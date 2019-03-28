@@ -68,11 +68,17 @@ final class Types
     {
         $keys = array_keys($this->all());
         $values = array_values($this->all());
+        $index = range(0, $this->count() - 1);
 
         return array_combine(
             $keys,
-            array_map($callback, $keys, $values)
+            array_map($callback, $keys, $values, $index)
         );
+    }
+
+    public function count (): int
+    {
+        return count($this->all());
     }
 
     public function setMany (array $types): void
