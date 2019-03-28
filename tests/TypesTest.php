@@ -101,4 +101,16 @@ class TypesTest extends TestCase
             $count++;
         });
     }
+
+    /** @test */
+    public function iterating_over_the_object ()
+    {
+        $array = ['test' => 'string', 'testing' => 'bool'];
+        $types = new Types($array);
+
+        foreach ($types as $key => $value) {
+            $this->assertTrue(array_key_exists($key, $array));
+            $this->assertTrue(in_array($value, $array));
+        }
+    }
 }

@@ -7,7 +7,7 @@ use Dbt\TypeChecker\Alias;
 use Dbt\TypeChecker\Type;
 use TypeError;
 
-final class Types
+final class Types implements \IteratorAggregate
 {
     /** @var array */
     private $types;
@@ -86,5 +86,10 @@ final class Types
         foreach ($types as $key => $type) {
             $this->set($key, $type);
         }
+    }
+
+    public function getIterator ()
+    {
+        return new \ArrayIterator($this->types);
     }
 }
