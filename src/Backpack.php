@@ -9,8 +9,18 @@ use Dbt\Backpack\Exceptions\WrongType;
 trait Backpack
 {
     protected $backpack = [];
+    protected $types = null;
 
     abstract protected function types (): Types;
+
+    public function getTypes (): Types
+    {
+        if ($this->types === null) {
+            $this->types = $this->types();
+        }
+
+        return $this->types;
+    }
 
     public function hydrate (array $values): void
     {
@@ -18,7 +28,7 @@ trait Backpack
 
         // When hydrating, require each key to be present on the given array
         // of values so there are no undefined values present.
-        foreach ($this->types()->all() as $key => $type) {
+        foreach ($this->getTypes()->all() as $key => $type) {
             $index++;
 
             switch (true) {
@@ -36,7 +46,7 @@ trait Backpack
 
     public function __set ($key, $value)
     {
-        if ($this->types()->has($key)) {
+        if ($this->getTypes()->has($key)) {
             $this->validateAndSet($key, $value);
             return;
         }
@@ -46,7 +56,7 @@ trait Backpack
 
     public function __get ($key)
     {
-        if ($this->types()->has($key)) {
+        if ($this->getTypes()->has($key)) {
             return $this->backpack[$key];
         }
 
@@ -55,11 +65,11 @@ trait Backpack
 
     protected function validateAndSet (string $key, $value)
     {
-        if ($this->types()->is($key, $value)) {
+        if ($this->getTypes()->is($key, $value)) {
             $this->backpack[$key] = $value;
             return;
         }
 
-        throw WrongType::of($key, $this->types()->get($key));
+        throw WrongType::of($key, $this->getTypes()->get($key));
     }
 }
