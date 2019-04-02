@@ -52,6 +52,17 @@ class BackpackTest extends TestCase
         $fixture->thisShouldFail;
     }
 
+    /** @test */
+    public function getting_types ()
+    {
+        $fixture = new Fixture();
+
+        $this->assertInstanceOf(Types::class, $fixture->getTypes());
+
+        // Check that the same instance returns each time.
+        $this->assertSame($fixture->getTypes(), $fixture->getTypes());
+    }
+
     /**
      * @test
      * @dataProvider passingHydrationData
