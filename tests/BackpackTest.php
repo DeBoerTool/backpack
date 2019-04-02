@@ -78,15 +78,6 @@ class BackpackTest extends TestCase
         $fixture->hydrate($payload);
     }
 
-    /** @test */
-    public function getting_types ()
-    {
-        $this->assertInstanceOf(Types::class, Fixture::getTypes());
-
-        // Check that the same instance returns each time.
-        $this->assertSame(Fixture::getTypes(), Fixture::getTypes());
-    }
-
     public function passingHydrationData (): array
     {
         $string = 'some string';

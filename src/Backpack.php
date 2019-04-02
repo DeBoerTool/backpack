@@ -10,12 +10,17 @@ trait Backpack
 {
     protected $backpack = [];
     protected $touched = [];
+    protected $types = null;
 
     abstract protected static function types (): Types;
 
-    public static function getTypes (): Types
+    public function getTypes (): Types
     {
-        return static::types();
+        if ($this->types === null) {
+            $this->types = static::types();
+        }
+
+        return $this->types;
     }
 
     public function hydrate (array $values): void
@@ -25,7 +30,7 @@ trait Backpack
         // When hydrating, require each key to be present on the given array
         // of values so there are no undefined values present. Hydrating is
         // intended as a constructor step, so it skips touching.
-        foreach (static::getTypes()->all() as $key => $type) {
+        foreach ($this->getTypes()->all() as $key => $type) {
             $index++;
 
             switch (true) {
@@ -43,7 +48,7 @@ trait Backpack
 
     public function __set ($key, $value)
     {
-        if (static::getTypes()->has($key)) {
+        if ($this->getTypes()->has($key)) {
             $this->setWithTouch($key, $value);
             return;
         }
@@ -53,7 +58,7 @@ trait Backpack
 
     public function __get ($key)
     {
-        if (static::getTypes()->has($key)) {
+        if ($this->getTypes()->has($key)) {
             return $this->backpack[$key];
         }
 
@@ -101,8 +106,8 @@ trait Backpack
      */
     protected function validate (string $key, $value): void
     {
-        if (!static::getTypes()->is($key, $value)) {
-            throw WrongType::of($key, static::getTypes()->get($key));
+        if (!$this->getTypes()->is($key, $value)) {
+            throw WrongType::of($key, $this->getTypes()->get($key));
         }
     }
 
