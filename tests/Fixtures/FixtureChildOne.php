@@ -10,7 +10,7 @@ use Dbt\Backpack\Types;
  */
 class FixtureChildOne extends Fixture
 {
-    protected static function types (): Types
+    public static function types (): Types
     {
         return new Types([
             'test1' => 'float',

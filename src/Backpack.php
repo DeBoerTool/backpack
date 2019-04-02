@@ -12,7 +12,7 @@ trait Backpack
     protected $touched = [];
     protected $types = null;
 
-    abstract protected static function types (): Types;
+    abstract public static function types (): Types;
 
     public function getTypes (): Types
     {

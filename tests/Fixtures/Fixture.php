@@ -16,7 +16,7 @@ class Fixture implements HasBackpack
 
     public $prop = 'test property';
 
-    protected static function types (): Types
+    public static function types (): Types
     {
         return new Types([
             'test1' => 'string',
