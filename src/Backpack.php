@@ -10,17 +10,12 @@ trait Backpack
 {
     protected $backpack = [];
     protected $touched = [];
-    protected static $types = null;
 
     abstract protected static function types (): Types;
 
     public static function getTypes (): Types
     {
-        if (static::$types === null) {
-            static::$types = static::types();
-        }
-
-        return static::$types;
+        return static::types();
     }
 
     public function hydrate (array $values): void
